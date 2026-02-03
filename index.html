@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aditi ❤️</title>
+  <style>
+    :root {
+      --bg1: #0f1020;
+      --bg2: #2a0f2a;
+      --card: rgba(255,255,255,0.08);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.70);
+      --yes: #22c55e;
+      --no: #ef4444;
+      --shadow: 0 20px 60px rgba(0,0,0,0.35);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color: var(--text);
+      background: radial-gradient(1200px 800px at 20% 20%, #3b1245 0%, transparent 60%),
+                  radial-gradient(1200px 800px at 80% 80%, #1a2a6c 0%, transparent 55%),
+                  linear-gradient(140deg, var(--bg1), var(--bg2));
+      overflow: hidden;
+    }
+
+    .card {
+      width: min(560px, calc(100vw - 32px));
+      padding: 28px;
+      border-radius: 20px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,0.14);
+      backdrop-filter: blur(10px);
+      position: relative;
+    }
+
+    .tag {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.14);
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: 0.2px;
+    }
+
+    h1 {
+      margin: 16px 0 6px;
+      font-size: clamp(26px, 4vw, 36px);
+      line-height: 1.15;
+    }
+    p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .arena {
+      position: relative;
+      height: 170px;
+      border-radius: 16px;
+      background: rgba(0,0,0,0.18);
+      border: 1px solid rgba(255,255,255,0.10);
+      overflow: hidden;
+    }
+
+    .btn {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      font-weight: 700;
+      padding: 12px 18px;
+      border-radius: 14px;
+      transition: transform 120ms ease, filter 120ms ease;
+      user-select: none;
+      touch-action: manipulation;
+      position: absolute;
+      min-width: 120px;
+    }
+    .btn:active { transform: scale(0.97); }
+
+    .yes {
+      background: linear-gradient(180deg, rgba(34,197,94,1), rgba(16,185,129,1));
+      color: #06210f;
+      left: 18px;
+      top: 58px;
+    }
+    .no {
+      background: linear-gradient(180deg, rgba(239,68,68,1), rgba(244,63,94,1));
+      color: #2a0206;
+      left: 170px;
+      top: 58px;
+    }
+
+    .result {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.08);
+      display: none;
+    }
+    .result strong { color: #fff; }
+
+    .hearts {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 250ms ease;
+    }
+    .heart {
+      position: absolute;
+      font-size: 18px;
+      animation: floatUp 1.9s ease-in infinite;
+      opacity: 0.85;
+      filter: drop-shadow(0 6px 14px rgba(0,0,0,0.35));
+    }
+    @keyframes floatUp {
+      0%   { transform: translateY(40px) scale(0.9); opacity: 0; }
+      15%  { opacity: 0.9; }
+      100% { transform: translateY(-220px) scale(1.15); opacity: 0; }
+    }
+
+    .footer {
+      margin-top: 14px;
+      color: rgba(255,255,255,0.55);
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="tag">💌 Little question for you</div>
+    <h1>Aditi, will you be my valentine? ❤️</h1>
+    <p>Choose wisely 😄</p>
+
+    <div class="arena" id="arena" aria-label="question arena">
+      <button class="btn yes" id="yesBtn">YES</button>
+      <button class="btn no" id="noBtn">NO</button>
+
+      <div class="hearts" id="hearts"></div>
+    </div>
+
+    <div class="result" id="resultBox">
+      <strong>YESS!!</strong> 😍<br/>
+      love you mera kaddu, Adu 💖
+    </div>
+
+    <div class="footer">Tip: made with love from badi.</div>
+  </div>
+
+<script>
+  const arena = document.getElementById("arena");
+  const noBtn = document.getElementById("noBtn");
+  const yesBtn = document.getElementById("yesBtn");
+  const resultBox = document.getElementById("resultBox");
+  const hearts = document.getElementById("hearts");
+
+  // Place NO button randomly inside arena (keeping margins)
+  function moveNoButton() {
+    const a = arena.getBoundingClientRect();
+    const b = noBtn.getBoundingClientRect();
+
+    const padding = 12;
+    const maxX = a.width - b.width - padding;
+    const maxY = a.height - b.height - padding;
+
+    // If arena too small, don't break
+    const x = Math.max(padding, Math.floor(Math.random() * Math.max(maxX, padding)));
+    const y = Math.max(padding, Math.floor(Math.random() * Math.max(maxY, padding)));
+
+    noBtn.style.left = x + "px";
+    noBtn.style.top  = y + "px";
+  }
+
+  // Make it dodge mouse + touch attempts
+  noBtn.addEventListener("mouseenter", moveNoButton);
+  noBtn.addEventListener("mouseover", moveNoButton);
+  noBtn.addEventListener("pointerdown", (e) => { e.preventDefault(); moveNoButton(); });
+  noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); moveNoButton(); }, { passive: false });
+
+  // If someone somehow clicks NO (keyboard etc.), still dodge
+  noBtn.addEventListener("click", (e) => { e.preventDefault(); moveNoButton(); });
+
+  // YES flow
+  yesBtn.addEventListener("click", () => {
+    resultBox.style.display = "block";
+    popHearts();
+  });
+
+  // Heart burst animation
+  function popHearts() {
+    hearts.innerHTML = "";
+    hearts.style.opacity = "1";
+
+    const emojis = ["❤️","💖","💕","💘","💗","💞"];
+    const a = arena.getBoundingClientRect();
+
+    for (let i = 0; i < 18; i++) {
+      const s = document.createElement("span");
+      s.className = "heart";
+      s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      s.style.left = Math.floor(Math.random() * (a.width - 20)) + "px";
+      s.style.top  = Math.floor(Math.random() * (a.height - 20)) + "px";
+      s.style.animationDelay = (Math.random() * 0.6) + "s";
+      s.style.animationDuration = (1.4 + Math.random() * 1.2) + "s";
+      hearts.appendChild(s);
+    }
+
+    setTimeout(() => { hearts.style.opacity = "0"; }, 2200);
+  }
+
+  // Start with a random NO position
+  moveNoButton();
+</script>
+</body>
+</html>
